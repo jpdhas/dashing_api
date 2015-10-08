@@ -1,0 +1,13 @@
+Gem::Specification.new do |s|
+  s.name        = 'dashing-api'
+  s.version     = '0.0.1'
+  s.date        = '2015-10-08'
+  s.summary     = "API for interaction with dashin"
+  s.description = "API for interaction with dashin"
+  s.authors     = ["FT"]
+  s.email       = 'jermila.dhas@ft.com'
+  s.files       = ["lib/helperFunctions.rb", "lib/dashing-api.rb"]
+  s.homepage    =
+    'http://rubygems.org/gems/dashing-api'
+  s.license       = 'MIT'
+end
