@@ -1,5 +1,6 @@
 require 'erb'
-
+require 'socket'
+  
 def getTemplate()
    %{
       <script type='text/javascript'>
@@ -92,6 +93,11 @@ class HelperFunctions
   
   def deleteTile(dashboard, hosts)
     return hosts
+  end
+
+  # Get the hostname
+  def getHost()
+     return Socket.gethostname
   end
 end
 
