@@ -2,14 +2,6 @@ require 'helperFunctions'
 
 functions = HelperFunctions.new
 
-#Get api key from yaml file
-config = YAML.load_file("/apps/dashing/config.yml")
-apikey = config["dashing"]["api_key"]
-dashingHost = Socket.gethostname
-set :auth_token, apikey
-set :default_dashboard, 'blue'
-set :protection, :except => :frame_options
-
 #Dashing endpoint to get the list of dashboards
 get '/dashboard/list' do
   content_type :json
