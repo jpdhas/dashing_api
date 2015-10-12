@@ -16,10 +16,9 @@ require './helperFunctions'
      content_type :json
      hostName = params[:id]
      if settings.history[hostName]
-        "Nagios host has a job script"
-        { :host => hostName, :status => '200 OK' }.to_json
+        { :host => hostName, :status => '200', :message => 'Nagios host has a job script' }.to_json
      else
-        { :host => hostName, :status => '404 Not Found' }.to_json
+        { :host => hostName, :status => '404', :message => 'Nagios host does not have a job script' }.to_json
      end
   end
 
@@ -43,9 +42,9 @@ require './helperFunctions'
   get '/dashboards/:id' do
     dashboard = params[:id]    
     if functions.dashboardExists(dashboard)
-       { :dashboard => dashboard, :status => '200 OK' }.to_json
+       { :dashboard => dashboard, :status => '200', :message => 'Dashboard exists' }.to_json
     else
-       { :dashboard => dashboard, :status => '404 Not Found' }.to_json
+       { :dashboard => dashboard, :status => '404', :message => 'Dashboard does not exist' }.to_json
     end
   end
 
@@ -59,13 +58,14 @@ require './helperFunctions'
        output = functions.nagiosHostExists(dashboard, hosts)
     
        if output.empty?
-          "Hosts "+hosts+" are on the dashboard!"
+          { :dashboard => dashboard, :hosts => hosts, :status => '200', :message => 'Hosts exists on the dashboard' }.to_json
        else
-          "Hosts "+output.join(',')+" are not on the dashboard"
+          { :dashboard => dashboard, :hosts => output.join(','), :status => '400', :message => 'Hosts are not on the dashboard' }.to_json
+
        end
 
     else
-       "Dashboard "+dashboard+ " does not exist!"
+       { :dashboard => dashboard, :status => '404', :message => 'Dashboard does not exist' }.to_json
     end
   end
 
@@ -78,12 +78,12 @@ require './helperFunctions'
     if functions.checkAuthToken(body, settings.auth_token)
       if functions.dashboardExists(body["from"])
          File.rename("/apps/dashing/dashboards/"+body["from"]+".erb", "/apps/dashing/dashboards/"+body["to"]+".erb")
-         "Dashboard renamed!"
+         { :status => '200', :message => 'Dashboard Renamed' }.to_json
       else
-        "Dashboard "+body["from"]+" does not exist!"
+        { :dashboard => body["from"], :status => '400', :message => 'Dashboard does not exist'}.to_json
       end
     else 
-      "Invalid API Key!" 
+      { :status => '403', :message => 'Invalid API Key' }.to_json
     end
   end
 
@@ -101,23 +101,22 @@ require './helperFunctions'
              output = functions.nagiosHostExists(dashboard,from)
              if output.empty?
                 File.write("/apps/dashing/dashboards/"+dashboard+".erb",File.open("/apps/dashing/dashboards/"+dashboard+".erb",&:read).gsub(from,to))
-                "Nagios host renamed"
+                { :status => '200', :message => 'Nagios host renamed' }.to_json
              else
-                "The host is not on the dashboard. Make sure you have given the correct host name"
+                { :status => '400', :dashboard => dashboard, :host => from, :message => 'Host not on the dashboard. Make sure you have given the correct hostname' }.to_json
              end
           else
-             "Dashboard "+dashboard+" does not exist!"
+             { :status => '400', :dashboard => dashboard, :message => 'Dashboard does not exist' }.to_json
           end
        else
-          "Permission denied to modify the Ops dashboard!"
+          { :status => '403', :message => 'Cannot modify the main dashboard' }.to_json
        end
     else
-       "Invalid API Key!"
+       { :status => '403', :message => 'Invalid API Key'}.to_json
     end
 
   end
 
-  
   # Create a new dashboard
   post '/dashboards/' do
     request.body.rewind
@@ -127,12 +126,13 @@ require './helperFunctions'
     if functions.checkAuthToken(body, settings.auth_token)
       if !functions.dashboardExists(dashboard)
          functions.createDashboard(body, dashboard) 
-         "Dashboard created! Link to your new dashboard: http://"+functions.getHost()+"/"+dashboard
+         dashboardLink = "http://"+functions.getHost()+"/"+dashboard
+         { :status => '200', :message => 'Dashboard Created', :dashboardLink => dashboardLink }.to_json
       else
-         "Dashboard already exists!"
+         { :status => '400', :message => 'Dashboard already exists' }.to_json
       end
     else
-      "Invalid API Key!"
+      { :status => '403', :message => 'Invalid API Key' }.to_json
     end
   end
 
@@ -147,15 +147,15 @@ require './helperFunctions'
        if dashboard != "blue"
            if functions.dashboardExists(dashboard)
               File.delete("/apps/dashing/dashboards/"+dashboard+".erb")
-              "Dashboard "+dashboard+" deleted!"
+              { :status => '200', :message => 'Dashboard deleted' }.to_json
            else
-              "Dashboard "+dashboard+" does not exist!"
+              { :status => '400', :message => 'Dashboard does not exist' }.to_json
            end
        else
-          "Permission denied to delete the Ops dashboard"
+          { :status => '403', :message => 'Cannot delete the Ops dashboard' }.to_json
        end
     else
-       "Invalid API Key!"
+       { :status => '403', :message => 'Invalid API Key' }.to_json
     end
   end
 
