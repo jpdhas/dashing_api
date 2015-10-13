@@ -1,5 +1,5 @@
 require 'json'
-require './helperFunctions'
+require 'helperFunctions'
 
   functions = HelperFunctions.new
 
