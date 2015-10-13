@@ -42,7 +42,7 @@ curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "YOUR_AUTH_TOKEN
 
 Replace a nagios host on a dashboard:
 ```sh
-curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "YOUR_AUTH_TOKEN", "dashboard": "", "from": "", "to": ""}' "http://<hostname>/hosts/"
+curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "YOUR_AUTH_TOKEN", "dashboard": "", "from": "", "to": ""}' "http://<hostname>/tiles/"
 ```
 
 Create a dashboard
