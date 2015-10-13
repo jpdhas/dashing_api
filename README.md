@@ -17,17 +17,17 @@ curl -i "http://<hostname>/dashboards/:id"
 
 Get the current status of a host:
 ```sh
-curl -i -H "Accept: application/json" "http://<hostname>/hosts/:id.json"
+curl -i -H "Accept: application/json" "http://<hostname>/tiles/:id.json"
 ```
 
 Check if a nagios host has a job script:
 ```sh
-curl -i "http://<hostname>/hosts/:id"
+curl -i "http://<hostname>/tiles/:id"
 ```
 
 Check if a nagios host exists on a dashboard:
 ```sh
-curl -i "http://<hostname>/hosts/:dashboard/:hosts"
+curl -i "http://<hostname>/tiles/:dashboard/:hosts"
 ```
 
 Delete a dashboard:
@@ -42,7 +42,7 @@ curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "YOUR_AUTH_TOKEN
 
 Replace a nagios host on a dashboard:
 ```sh
-curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "YOUR_AUTH_TOKEN", "dashboard": "", "from": "", "to": ""}' "http://<hostname>/widgets/"
+curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "YOUR_AUTH_TOKEN", "dashboard": "", "from": "", "to": ""}' "http://<hostname>/hosts/"
 ```
 
 Create a dashboard
