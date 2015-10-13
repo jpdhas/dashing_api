@@ -4,7 +4,7 @@ require 'helperFunctions'
   functions = HelperFunctions.new
 
   # Get the current status of a tile
-  get '/hosts/:id.json' do
+  get '/tiles/:id.json' do
     content_type :json
     if data = settings.history[params[:id]]
        data.split[1]
@@ -12,7 +12,7 @@ require 'helperFunctions'
   end  
 
   # Check if a nagios host has a job script
-  get '/hosts/:id' do
+  get '/tiles/:id' do
      content_type :json
      hostName = params[:id]
      if settings.history[hostName]
@@ -52,7 +52,7 @@ require 'helperFunctions'
 
 
   # Check if a nagios host/hosts exists on a dashboard
-  get '/hosts/:dashboard/:hosts'  do
+  get '/tiles/:dashboard/:hosts'  do
 
     hosts = params[:hosts]
     dashboard = params[:dashboard]
@@ -92,7 +92,7 @@ require 'helperFunctions'
   end
 
   # Replace a nagios host on a dashboard
-  put '/widgets/' do
+  put '/tiles/' do
     request.body.rewind
     body = JSON.parse(request.body.read)
     dashboard = body["dashboard"]
