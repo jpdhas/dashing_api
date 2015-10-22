@@ -1,5 +1,19 @@
 #Dashing API
 
+## Building
+
+Build a gem:
+```sh
+gem build dashing-api.gemspec
+```
+
+Install:
+```sh
+gem install dashing-api-<version>.gem
+```
+
+## API endpoints
+
 List the existing widgets:
 ```sh
 curl "http://<hostname>/widgets/"
