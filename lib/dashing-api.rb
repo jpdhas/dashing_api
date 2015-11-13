@@ -1,4 +1,5 @@
 require 'json'
+require 'sinatra'
 require 'helperFunctions.rb'
 
   functions = HelperFunctions.new
