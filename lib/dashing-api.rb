@@ -69,7 +69,33 @@ put '/dashboards/' do
 	status 401
       	{ :message => 'Invalid API Key' }.to_json
     end
-  end
+end
+
+# Delete a dashboard
+delete '/dashboards/' do
+    request.body.rewind
+    body = JSON.parse(request.body.read)
+    dashboard = body["dashboard"]
+   
+    if functions.checkAuthToken(body, settings.auth_token)
+        if dashboard != "blue"
+            if functions.dashboardExists(dashboard, settings.root)
+                File.delete(settings.root+'/dashboards/'+dashboard+'.erb')
+                { :message => 'Dashboard deleted' }.to_json
+            else
+		status 400
+                { :message => 'Dashboard does not exist' }.to_json
+            end
+        else
+	    status 401
+            { :message => 'Cannot delete the Ops dashboard' }.to_json
+        end
+    else
+	status 401
+        { :message => 'Invalid API Key' }.to_json
+    end
+end
+
   
   # Check if a nagios host has a job script
   get '/tiles/:id' do
@@ -159,33 +185,7 @@ put '/dashboards/' do
   end
 
 
-  # Delete the dashboard
-  delete '/dashboards/' do
-    request.body.rewind
-    body = JSON.parse(request.body.read)
-    dashboard = body["dashboard"]
-   
-    if functions.checkAuthToken(body, settings.auth_token)
-       if dashboard != "blue"
-           if functions.dashboardExists(dashboard)
-              File.delete("/apps/dashing/dashboards/"+dashboard+".erb")
-              { :message => 'Dashboard deleted' }.to_json
-           else
-		status 400
-              { :message => 'Dashboard does not exist' }.to_json
-           end
-       else
-	  status 403
-          { :message => 'Cannot delete the Ops dashboard' }.to_json
-       end
-    else
-	status 403
-       { :message => 'Invalid API Key' }.to_json
-    end
-  end
-
-  
-  # Delete a tile
+    # Delete a tile
   delete '/widgets/' do
     request.body.rewind
     body = JSON.parse(request.body.read)
