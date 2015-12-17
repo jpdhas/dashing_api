@@ -78,7 +78,7 @@ delete '/dashboards/' do
     dashboard = body["dashboard"]
    
     if functions.checkAuthToken(body, settings.auth_token)
-        if dashboard != "blue"
+        if dashboard != settings.default_dashboard
             if functions.dashboardExists(dashboard, settings.root)
                 File.delete(settings.root+'/dashboards/'+dashboard+'.erb')
                 { :message => 'Dashboard deleted' }.to_json
@@ -88,7 +88,7 @@ delete '/dashboards/' do
             end
         else
 	    status 401
-            { :message => 'Cannot delete the Ops dashboard' }.to_json
+            { :message => 'Cannot delete the main dashboard' }.to_json
         end
     else
 	status 401
