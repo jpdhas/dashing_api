@@ -44,59 +44,59 @@ class HelperFunctions
     	end
     end
 
-  	# Check if a nagios host/hosts exists on a dashboard
-  	def nagiosHostExists(dashboard, hosts)
+    # Check if a nagios host/hosts exists on a dashboard
+    def nagiosHostExists(dashboard, hosts)
     	if hosts.kind_of?(Array)
-       		arrHosts = hosts
+       	    arrHosts = hosts
     	else
-       		arrHosts = hosts.split(",")
+       	    arrHosts = hosts.split(",")
     	end
 
-		dontExist = Array.new
+	dontExist = Array.new
     	for hosts in arrHosts
-       		if File.foreach("/apps/dashing/dashboards/"+dashboard+".erb").any?{ |l| l[hosts]  }
-          		next
-       		else 
-          		dontExist.push(hosts)
-       		end
+       	    if File.foreach("/apps/dashing/dashboards/"+dashboard+".erb").any?{ |l| l[hosts]  }
+                next
+       	    else 
+          	dontExist.push(hosts)
+       	    end
     	end
     	return dontExist
-  	end
+    end
 
-  	# Check if the dashboard exists within the dashboard folder
-  	def dashboardExists(dashboardName, directory)
+    # Check if the dashboard exists within the dashboard folder
+    def dashboardExists(dashboardName, directory)
     	if File.exist?(directory+'/dashboards/'+dashboardName+'.erb')
-       		return true
+       	    return true
     	else
-       		return false
+       	    return false
     	end
-  	end
+    end
 
-  	def render(body)
-     	ERB.new(@template).result(binding)
-  	end
+    def render(body)
+        ERB.new(@template).result(binding)
+    end
 
-  	def save(file, body)
-     	File.new(file, "w")
+    def save(file, body)
+    	File.new(file, "w")
      	File.open(file, "w+") do |f|
-        	f.write(render(body))
+            f.write(render(body))
      	end
-  	end
+     end
 
-  	def createDashboard(body, dashboardName)
-    	@body = body
+     def createDashboard(body, dashboardName)
+     	@body = body
     	@dashboard = '/apps/dashing/dashboards/'+dashboardName+'.erb'
     	save(@dashboard, @body)
     	return @body
-  	end
+     end
   
-  	def deleteTile(dashboard, hosts)
-    	return hosts
-  	end
+     def deleteTile(dashboard, hosts)
+     	return hosts
+     end
 
   	# Get the hostname
-  	def getHost()
+     def getHost()
      	return Socket.gethostname
-  	end
+     end
 end
 
