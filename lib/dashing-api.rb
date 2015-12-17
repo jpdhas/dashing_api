@@ -4,7 +4,7 @@ require 'helperFunctions.rb'
 
 functions = HelperFunctions.new
 
-# Get the status of the current tile
+# Get the current status of the tile
 get '/tiles/:id.json' do
 	content_type :json
 	if data = settings.history[params[:id]]
@@ -41,6 +41,17 @@ get '/dashboards/' do
 	{ :dashboards => dashboards }.to_json
 end
 
+# Check is a dashboard exists
+get '/dashboards/:dashboardName' do
+    dashboard = params[:dashboardName]    
+    if functions.dashboardExists(dashboard, settings.root)
+    	{ :dashboard => dashboard, :message => 'Dashboard exists' }.to_json
+    else
+		#status 404 - Renders a default 404 html. Have to override the default not_found handler
+       	{ :dashboard => dashboard, :message => 'Dashboard does not exist' }.to_json
+    end
+end
+
   # Check if a nagios host has a job script
   get '/tiles/:id' do
      content_type :json
@@ -52,19 +63,7 @@ end
         { :host => hostName, :message => 'Nagios host does not have a job script' }.to_json
      end
   end
-
-    # Check if a dashboard exists
-  get '/dashboards/:id' do
-    dashboard = params[:id]    
-    if functions.dashboardExists(dashboard)
-       { :dashboard => dashboard, :message => 'Dashboard exists' }.to_json
-    else
-	status 404
-       { :dashboard => dashboard, :message => 'Dashboard does not exist' }.to_json
-    end
-  end
-
-
+  
   # Check if a nagios host/hosts exists on a dashboard
   get '/tiles/:dashboard/:hosts'  do
 
