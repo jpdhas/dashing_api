@@ -6,39 +6,39 @@ functions = HelperFunctions.new
 
 # Get the current status of the tile
 get '/tiles/:id.json' do
-	content_type :json
-	if data = settings.history[params[:id]]
-		data.split[1]
-	end	
+    content_type :json
+    if data = settings.history[params[:id]]
+    	data.split[1]
+    end	
 end  
 
 # List all widgets
 get '/widgets/' do
-	content_type :json
-	widgets = Array.new()
+    content_type :json
+    widgets = Array.new()
 
-	Dir.entries(settings.root+'/widgets/').each do |widget|
-		if !File.directory? widget 
-			widgets.push widget
-		end
+    Dir.entries(settings.root+'/widgets/').each do |widget|
+	if !File.directory? widget 
+		widgets.push widget
 	end
+    end
 
-	{ :widgets => widgets }.to_json
+    { :widgets => widgets }.to_json
 end
 
 # List all dashboards
 get '/dashboards/' do
-	content_type :json
-	dashboards = Array.new()
+    content_type :json
+    dashboards = Array.new()
 
-	# Get the name of the dashboard only. Strip the path
-	Dir.entries(settings.root+'/dashboards/').each do |dashboard|
-		dashArray = dashboard.split("/")
-		dashboard = dashArray[dashArray.length-1]
-		dashboards.push dashboard
-	end
+    # Get the name of the dashboard only. Strip the path
+    Dir.entries(settings.root+'/dashboards/').each do |dashboard|
+    	dashArray = dashboard.split("/")
+	dashboard = dashArray[dashArray.length-1]
+	dashboards.push dashboard
+    end
 
-	{ :dashboards => dashboards }.to_json
+    { :dashboards => dashboards }.to_json
 end
 
 # Check is a dashboard exists
