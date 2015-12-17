@@ -83,7 +83,7 @@ delete '/dashboards/' do
                 File.delete(settings.root+'/dashboards/'+dashboard+'.erb')
                 { :message => 'Dashboard deleted' }.to_json
             else
-		status 400
+		#status 404 - Renders a default 404 html. Have to override the default not_found handler
                 { :message => 'Dashboard does not exist' }.to_json
             end
         else
@@ -97,17 +97,17 @@ delete '/dashboards/' do
 end
 
   
-  # Check if a nagios host has a job script
-  get '/tiles/:id' do
-     content_type :json
-     hostName = params[:id]
-     if settings.history[hostName]
-        { :host => hostName, :message => 'Nagios host has a job script' }.to_json
-     else
-	status 404
-        { :host => hostName, :message => 'Nagios host does not have a job script' }.to_json
-     end
-  end
+# Check if a tile has a job script
+get '/tiles/:id' do
+    content_type :json
+    hostName = params[:id]
+    if settings.history[hostName]
+        { :host => hostName, :message => 'The tile has a job script' }.to_json
+    else
+	#status 404 - Renders a default 404 html. Have to override the default not_found handler
+        { :host => hostName, :message => 'The tile does not have a job script' }.to_json
+    end
+end
   
   # Check if a nagios host/hosts exists on a dashboard
   get '/tiles/:dashboard/:hosts'  do
