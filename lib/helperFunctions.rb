@@ -28,21 +28,21 @@ end
 
 class HelperFunctions
 
-	include ERB::Util
+    include ERB::Util
 
-  	def initialize
+    def initialize
     	@template = getTemplate
-  	end
+    end
 
-  	# Check if the auth_token is a valid 
-  	def checkAuthToken(body, token)
+    # Check if the auth_token is a valid 
+    def checkAuthToken(body, token)
     	@auth_token = body["auth_token"]
     	if token == @auth_token
        		return true
     	else
        		return false
     	end
-  	end
+    end
 
   	# Check if a nagios host/hosts exists on a dashboard
   	def nagiosHostExists(dashboard, hosts)
