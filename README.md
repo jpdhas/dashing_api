@@ -26,7 +26,7 @@ curl "http://<hostname>/dashboards/"
 
 Check if a dashboard exists:
 ```sh
-curl -i "http://<hostname>/dashboards/:id"
+curl "http://<hostname>/dashboards/:id"
 ```
 
 Get the current status of a host:
