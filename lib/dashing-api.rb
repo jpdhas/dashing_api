@@ -19,7 +19,7 @@ get '/widgets/' do
 
     Dir.entries(settings.root+'/widgets/').each do |widget|
 	if !File.directory? widget 
-		widgets.push widget
+	    widgets.push widget
 	end
     end
 
