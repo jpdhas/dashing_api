@@ -47,7 +47,7 @@ get '/dashboards/:dashboardName' do
     if functions.dashboardExists(dashboard, settings.root)
     	{ :dashboard => dashboard, :message => 'Dashboard exists' }.to_json
     else
-		#status 404 - Renders a default 404 html. Have to override the default not_found handler
+	#status 404 - Renders a default 404 html. Have to override the default not_found handler
        	{ :dashboard => dashboard, :message => 'Dashboard does not exist' }.to_json
     end
 end
@@ -58,11 +58,12 @@ put '/dashboards/' do
     body = JSON.parse(request.body.read)
     
     if functions.checkAuthToken(body, settings.auth_token)
-    	if functions.dashboardExists(body["from"])
-      	    File.rename(settings.root+'/dashboards/'+body["from"]+'.erb', settings.root+'/dashboards/'+body["to"]+'.erb')
+    	if functions.dashboardExists(body['from'], settings.root)
+      	    File.rename(settings.root+'/dashboards/'+body['from']+'.erb', settings.root+'/dashboards/'+body['to']+'.erb')
             { :message => 'Dashboard Renamed' }.to_json
       	else
-            { :dashboard => body["from"], :message => 'Dashboard does not exist'}.to_json
+      	    #status 404 - Renders a default 404 html. Have to override the default not_found handler
+            { :dashboard => body['from'], :message => 'Dashboard does not exist'}.to_json
       	end
     else 
 	status 401
