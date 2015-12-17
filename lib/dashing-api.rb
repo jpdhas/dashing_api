@@ -52,6 +52,24 @@ get '/dashboards/:dashboardName' do
     end
 end
 
+# Rename a dashboard
+put '/dashboards/' do
+    request.body.rewind
+    body = JSON.parse(request.body.read)
+    
+    if functions.checkAuthToken(body, settings.auth_token)
+    	if functions.dashboardExists(body["from"])
+      	    File.rename(settings.root+'/dashboards/'+body["from"]+'.erb', settings.root+'/dashboards/'+body["to"]+'.erb')
+            { :message => 'Dashboard Renamed' }.to_json
+      	else
+            { :dashboard => body["from"], :message => 'Dashboard does not exist'}.to_json
+      	end
+    else 
+	status 401
+      	{ :message => 'Invalid API Key' }.to_json
+    end
+  end
+  
   # Check if a nagios host has a job script
   get '/tiles/:id' do
      content_type :json
@@ -85,26 +103,7 @@ end
   end
 
 
-  # Rename a dashboard
-  put '/dashboards/' do
-    request.body.rewind
-    body = JSON.parse(request.body.read)
-    
-    if functions.checkAuthToken(body, settings.auth_token)
-      if functions.dashboardExists(body["from"])
-         File.rename("/apps/dashing/dashboards/"+body["from"]+".erb", "/apps/dashing/dashboards/"+body["to"]+".erb")
-         { :message => 'Dashboard Renamed' }.to_json
-      else
-	status 400
-        { :dashboard => body["from"], :message => 'Dashboard does not exist'}.to_json
-      end
-    else 
-	status 403
-      { :message => 'Invalid API Key' }.to_json
-    end
-  end
-
-  # Replace a nagios host on a dashboard
+    # Replace a nagios host on a dashboard
   put '/tiles/' do
     request.body.rewind
     body = JSON.parse(request.body.read)
