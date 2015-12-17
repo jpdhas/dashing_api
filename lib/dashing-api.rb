@@ -2,15 +2,44 @@ require 'json'
 require 'sinatra'
 require 'helperFunctions.rb'
 
-  functions = HelperFunctions.new
+functions = HelperFunctions.new
 
-  # Get the current status of a tile
-  get '/tiles/:id.json' do
-    content_type :json
-    if data = settings.history[params[:id]]
-       data.split[1]
-    end
-  end  
+# Get the status of the current tile
+get '/tiles/:id.json' do
+	content_type :json
+	if data = settings.history[params[:id]]
+		data.split[1]
+	end	
+end  
+
+# List all widgets
+get '/widgets/' do
+	content_type :json
+	widgets = Array.new()
+
+	Dir.entries(settings.root+'/widgets/').each do |widget|
+		if !File.directory? widget 
+			widgets.push widget
+		end
+	end
+
+	{ :widgets => widgets }.to_json
+end
+
+# List all dashboards
+get '/dashboards/' do
+	content_type :json
+	dashboards = Array.new()
+
+	# Get the name of the dashboard only. Strip the path
+	Dir.entries(settings.root+'/dashboards/').each do |dashboard|
+		dashArray = dashboard.split("/")
+		dashboard = dashArray[dashArray.length-1]
+		dashboards.push dashboard
+	end
+
+	{ :dashboards => dashboards }.to_json
+end
 
   # Check if a nagios host has a job script
   get '/tiles/:id' do
@@ -24,23 +53,7 @@ require 'helperFunctions.rb'
      end
   end
 
-  # Get a list of all existing widgets
-  get '/widgets/' do
-    content_type :json
-    %x`ls widgets/`
-  end
-
-
-  # Get a list of a existing dashboards
-  get '/dashboards/' do
-    content_type :json
-    output = %x`ls dashboards/*.erb | xargs -n1 basename`
-    output.reverse
-    output.split('/n')
-  end
-
-
-  # Check if a dashboard exists
+    # Check if a dashboard exists
   get '/dashboards/:id' do
     dashboard = params[:id]    
     if functions.dashboardExists(dashboard)
