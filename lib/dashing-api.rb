@@ -115,7 +115,7 @@ end
     hosts = params[:hosts]
     dashboard = params[:dashboard]
     if functions.dashboardExists(dashboard)
-       output = functions.nagiosHostExists(dashboard, hosts)
+       output = functions.tileExists(dashboard, hosts)
     
        if output.empty?
           { :dashboard => dashboard, :hosts => hosts, :message => 'Hosts exists on the dashboard' }.to_json
@@ -141,7 +141,7 @@ end
     if functions.checkAuthToken(body, settings.auth_token)
        if dashboard != "blue"
           if functions.dashboardExists(dashboard)
-             output = functions.nagiosHostExists(dashboard,from)
+             output = functions.tileExists(dashboard,from)
              if output.empty?
                 File.write("/apps/dashing/dashboards/"+dashboard+".erb",File.open("/apps/dashing/dashboards/"+dashboard+".erb",&:read).gsub(from,to))
                 { :message => 'Nagios host renamed' }.to_json
