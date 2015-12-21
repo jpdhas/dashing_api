@@ -109,25 +109,23 @@ get '/tiles/:id' do
     end
 end
   
-  # Check if a nagios host/hosts exists on a dashboard
-  get '/tiles/:dashboard/:hosts'  do
-
+# Check if a tile exists on a dashboard
+get '/tiles/:dashboard/:hosts'  do
     hosts = params[:hosts]
     dashboard = params[:dashboard]
     if functions.dashboardExists(dashboard)
-       output = functions.tileExists(dashboard, hosts)
-    
-       if output.empty?
-          { :dashboard => dashboard, :hosts => hosts, :message => 'Hosts exists on the dashboard' }.to_json
-       else
-	status 400
-          { :dashboard => dashboard, :hosts => output.join(','), :message => 'Hosts are not on the dashboard' }.to_json
-       end
+        output = functions.tileExists(dashboard, hosts)
+        if output.empty?
+            { :dashboard => dashboard, :hosts => hosts, :message => 'Hosts exists on the dashboard' }.to_json
+        else
+	    status 400
+            { :dashboard => dashboard, :hosts => output.join(','), :message => 'Hosts are not on the dashboard' }.to_json
+        end
     else
-	status 404
-       { :dashboard => dashboard, :message => 'Dashboard does not exist' }.to_json
+	#status 404 - Renders a default 404 html. Have to override the default not_found handler
+        { :dashboard => dashboard, :message => 'Dashboard does not exist' }.to_json
     end
-  end
+end
 
 
     # Replace a nagios host on a dashboard
