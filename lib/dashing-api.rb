@@ -113,8 +113,8 @@ end
 get '/tiles/:dashboard/:hosts'  do
     hosts = params[:hosts]
     dashboard = params[:dashboard]
-    if functions.dashboardExists(dashboard)
-        output = functions.tileExists(dashboard, hosts)
+    if functions.dashboardExists(dashboard, settings.root)
+        output = functions.tileExists(dashboard, hosts, settings.root)
         if output.empty?
             { :dashboard => dashboard, :hosts => hosts, :message => 'Hosts exists on the dashboard' }.to_json
         else
