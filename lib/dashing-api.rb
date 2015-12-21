@@ -97,7 +97,7 @@ delete '/dashboards/' do
 end
 
   
-# Check if a tile has a job script
+# Check if a job script is working
 get '/tiles/:id' do
     content_type :json
     hostName = params[:id]
