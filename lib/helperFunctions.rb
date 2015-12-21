@@ -36,31 +36,31 @@ class HelperFunctions
 
     # Check if the auth_token is a valid 
     def checkAuthToken(body, token)
-    	@auth_token = body["auth_token"]
-    	if token == @auth_token
-       		return true
+    	auth_token = body["auth_token"]
+    	if token == auth_token
+       	    return true
     	else
-       		return false
+       	    return false
     	end
     end
 
     # Check if a nagios host/hosts exists on a dashboard
-    def nagiosHostExists(dashboard, hosts)
+    def tileExists(dashboard, hosts, directory)
     	if hosts.kind_of?(Array)
        	    arrHosts = hosts
     	else
        	    arrHosts = hosts.split(",")
     	end
 
-	dontExist = Array.new
+	doNotExist = Array.new
     	for hosts in arrHosts
-       	    if File.foreach("/apps/dashing/dashboards/"+dashboard+".erb").any?{ |l| l[hosts]  }
+       	    if File.foreach(directory+'/dashboards/'+dashboardName+'.erb').any?{ |l| l[hosts]  }
                 next
        	    else 
-          	dontExist.push(hosts)
+          	doNotExist.push(hosts)
        	    end
     	end
-    	return dontExist
+    	return doNotExist
     end
 
     # Check if the dashboard exists within the dashboard folder
