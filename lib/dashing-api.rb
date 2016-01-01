@@ -164,26 +164,29 @@ put '/tiles/' do
     end
 end
 
-  # Create a new dashboard
-  post '/dashboards/' do
+# Create a new dashboard
+post '/dashboards/' do
     request.body.rewind
     body = JSON.parse(request.body.read)
     dashboard = body["dashboard"]
 
     if functions.checkAuthToken(body, settings.auth_token)
-      if !functions.dashboardExists(dashboard)
-         functions.createDashboard(body, dashboard) 
-         dashboardLink = "http://"+functions.getHost()+"/"+dashboard
-         { :message => 'Dashboard Created', :dashboardLink => dashboardLink }.to_json
-      else
-	 status 400
-         { :message => 'Dashboard already exists' }.to_json
-      end
+        if !functions.dashboardExists(dashboard, settings.root)
+            if functions.createDashboard(body, dashboard, settings.root) 
+                dashboardLink = "http://"+functions.getHost()+"/"+dashboard
+                { :message => 'Dashboard Created', :dashboardLink => dashboardLink }.to_json
+            else
+            	{ :message => 'Make sure' }.to_json
+            end
+        else
+	    status 400
+            { :dashboard => dashboard, :message => 'Dashboard already exists' }.to_json
+        end
     else
 	status 403
-      { :message => 'Invalid API Key' }.to_json
+        { :message => 'Invalid API Key' }.to_json
     end
-  end
+end
 
 
     # Delete a tile
