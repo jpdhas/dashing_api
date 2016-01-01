@@ -131,7 +131,7 @@ get '/tiles/:dashboard/:hosts'  do
 end
 
 
-# Replace a tile name on a dashboard
+# Replace a tile id on a dashboard
 put '/tiles/' do
     request.body.rewind
     body = JSON.parse(request.body.read)
