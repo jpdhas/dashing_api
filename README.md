@@ -61,6 +61,6 @@ curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "YOUR_AUTH_TOKEN
 
 Create a dashboard
 ```sh
-curl -i -H 'Accept: application/json' -d '{"auth_token": "YOUR_AUTH_TOKEN", "dashboard": , "Nagios": {"hosts": [" "," "], "title": [" ", " "]}}' http://<hostname>/dashboards/
+curl -i -H 'Accept: application/json' -d '{"auth_token": "YOUR_AUTH_TOKEN", "dashboard": , "tiles": {"hosts": [" "," "], "titles": [" ", " "], "widgets": [" ", " "], "urls": [" ", " "]}}' http://<hostname>/dashboards/
 ```
 
