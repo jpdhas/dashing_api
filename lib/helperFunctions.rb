@@ -15,9 +15,9 @@ def getTemplate()
 
       	<div class="gridster">
         	<ul>
-         	<% body["Nagios"]["hosts"].zip(body["Nagios"]["title"]) do |host, title| %>
+         	<% for i in 0..body["tiles"]["hosts"].length-1 %>
             <li data-row="1" data-col="1" data-sizex="2" data-sizey="2" onClick="myFunction()">
-               <div data-id="<%=host%>" data-view="Nagios" data-unordered="true" data-title="<%=title%>" data-url="http://<%=host%>.osb.ft.com/nagios/cgi-bin/status.cgi" data-bind-style="status" style="style"></div>
+               <div data-id="<%= body["tiles"]["hosts"][i] %>" data-view="<%= body["tiles"]["widgets"][i]  %>" data-unordered="true" data-title="<%= body["tiles"]["titles"][i] %>" data-url="<%= body["tiles"]["urls"][i]  %>" data-bind-style="status" style="style"></div>
             </li>
          	<% end %>
          	</ul>
@@ -82,22 +82,37 @@ class HelperFunctions
      	File.open(file, "w+") do |f|
             f.write(render(body))
      	end
-     end
+    end
 
-     def createDashboard(body, dashboardName)
-     	@body = body
-    	@dashboard = '/apps/dashing/dashboards/'+dashboardName+'.erb'
-    	save(@dashboard, @body)
-    	return @body
-     end
+    def checkArray(body)
+        hostLen = body["tiles"]["hosts"].length
+     	widgetLen = body["tiles"]["widgets"].length
+     	titleLen = body["tiles"]["titles"].length
+     	
+     	if hostLen.equal?(widgetLen) and widgetLen.equal?(titleLen)
+     	    return true
+     	else
+     	    return false
+     	end
+    end
+     	
+    def createDashboard(body, dashboardName, directory)
+        dashboard = directory+'/dashboards/'+dashboardName+'.erb'
+        if checkArray(body) 
+    	    save(dashboard, body)
+    	    return true
+    	else
+    	    return false
+    	end
+    end
   
      def deleteTile(dashboard, hosts)
      	return hosts
      end
 
   	# Get the hostname
-     def getHost()
-     	return Socket.gethostname
-     end
+    def getHost()
+        return Socket.gethostname
+    end
 end
 
