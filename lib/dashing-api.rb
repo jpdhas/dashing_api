@@ -4,6 +4,12 @@ require 'helperFunctions.rb'
 
 functions = HelperFunctions.new
 
+# A noobie way of overriding not_found block for 404
+error 404 do
+    content_type :json
+    { :error => 404, :message => 'Not Found' }.to_json
+end
+
 # Get the current status of the tile
 get '/tiles/:id.json' do
     content_type :json
@@ -47,8 +53,7 @@ get '/dashboards/:dashboardName' do
     if functions.dashboardExists(dashboard, settings.root)
     	{ :dashboard => dashboard, :message => 'Dashboard exists' }.to_json
     else
-	#status 404 - Renders a default 404 html. Have to override the default not_found handler
-       	{ :dashboard => dashboard, :message => 'Dashboard does not exist' }.to_json
+	404
     end
 end
 
@@ -56,14 +61,15 @@ end
 put '/dashboards/' do
     request.body.rewind
     body = JSON.parse(request.body.read)
+    from = body['from']
+    to = body['to']
     
     if functions.checkAuthToken(body, settings.auth_token)
     	if functions.dashboardExists(body['from'], settings.root)
-      	    File.rename(settings.root+'/dashboards/'+body['from']+'.erb', settings.root+'/dashboards/'+body['to']+'.erb')
-            { :message => 'Dashboard Renamed' }.to_json
+      	    File.rename(settings.root+'/dashboards/'+from+'.erb', settings.root+'/dashboards/'+to+'.erb')
+            { :dashboard => :message => 'Dashboard Renamed' }.to_json
       	else
-      	    #status 404 - Renders a default 404 html. Have to override the default not_found handler
-            { :dashboard => body['from'], :message => 'Dashboard does not exist'}.to_json
+      	    404
       	end
     else 
 	status 401
@@ -81,14 +87,13 @@ delete '/dashboards/' do
         if dashboard != settings.default_dashboard
             if functions.dashboardExists(dashboard, settings.root)
                 File.delete(settings.root+'/dashboards/'+dashboard+'.erb')
-                { :message => 'Dashboard deleted' }.to_json
+                { :dashboard => dashboard, :message => 'Dashboard deleted' }.to_json
             else
-		#status 404 - Renders a default 404 html. Have to override the default not_found handler
-                { :message => 'Dashboard does not exist' }.to_json
+		404
             end
         else
 	    status 401
-            { :message => 'Cannot delete the main dashboard' }.to_json
+            { :dashboard => dashboard, :message => 'Cannot delete the main dashboard' }.to_json
         end
     else
 	status 401
@@ -102,10 +107,9 @@ get '/tiles/:id' do
     content_type :json
     hostName = params[:id]
     if settings.history[hostName]
-        { :host => hostName, :message => 'The tile has a job script' }.to_json
+        { :tile => hostName, :message => 'The tile has a job script' }.to_json
     else
-	#status 404 - Renders a default 404 html. Have to override the default not_found handler
-        { :host => hostName, :message => 'The tile does not have a job script' }.to_json
+	404
     end
 end
   
@@ -116,20 +120,19 @@ get '/tiles/:dashboard/:hosts'  do
     if functions.dashboardExists(dashboard, settings.root)
         output = functions.tileExists(dashboard, hosts, settings.root)
         if output.empty?
-            { :dashboard => dashboard, :hosts => hosts, :message => 'Hosts exists on the dashboard' }.to_json
+            { :dashboard => dashboard, :tiles => hosts, :message => 'Tiles exists on the dashboard' }.to_json
         else
 	    status 400
-            { :dashboard => dashboard, :hosts => output.join(','), :message => 'Hosts are not on the dashboard' }.to_json
+            { :dashboard => dashboard, :tiles => output.join(','), :message => 'Tiles are not on the dashboard' }.to_json
         end
     else
-	#status 404 - Renders a default 404 html. Have to override the default not_found handler
-        { :dashboard => dashboard, :message => 'Dashboard does not exist' }.to_json
+	404
     end
 end
 
 
-    # Replace a nagios host on a dashboard
-  put '/tiles/' do
+# Replace a tile name on a dashboard
+put '/tiles/' do
     request.body.rewind
     body = JSON.parse(request.body.read)
     dashboard = body["dashboard"]
@@ -137,29 +140,29 @@ end
     to = body["to"]
   
     if functions.checkAuthToken(body, settings.auth_token)
-       if dashboard != "blue"
-          if functions.dashboardExists(dashboard)
-             output = functions.tileExists(dashboard,from)
-             if output.empty?
-                File.write("/apps/dashing/dashboards/"+dashboard+".erb",File.open("/apps/dashing/dashboards/"+dashboard+".erb",&:read).gsub(from,to))
-                { :message => 'Nagios host renamed' }.to_json
-             else
-		status 400
-                { :dashboard => dashboard, :host => from, :message => 'Host not on the dashboard. Make sure you have given the correct hostname' }.to_json
-             end
-          else
+        if dashboard != settings.default_dashboard
+            if functions.dashboardExists(dashboard)
+                output = functions.tileExists(dashboard,from, settings.root)
+                if output.empty?
+                    File.write(settings.root+"/dashboards/"+dashboard+".erb",File.open(settings.root+"/dashboards/"+dashboard+".erb",&:read).gsub(from,to))
+                    { :dashboard => dashboard, :tile => to, :message => 'Tile Renamed' }.to_json
+                else
+		    status 400
+                    { :dashboard => dashboard, :tile => from, :message => 'Tile not on the dashboard. Make sure you have given the correct tilename' }.to_json
+                end
+            else
 		status  400
-             { :dashboard => dashboard, :message => 'Dashboard does not exist' }.to_json
-          end
-       else
-	  status 403
-          { :message => 'Cannot modify the main dashboard' }.to_json
-       end
+                { :dashboard => dashboard, :message => 'Dashboard does not exist' }.to_json
+            end
+        else
+	    status 403
+            { :dashboard => dashboard, :message => 'Cannot modify the main dashboard' }.to_json
+        end
     else
-	status 403
-       { :message => 'Invalid API Key'}.to_json
+        status 403
+        { :message => 'Invalid API Key'}.to_json
     end
-  end
+end
 
   # Create a new dashboard
   post '/dashboards/' do
