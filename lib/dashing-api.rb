@@ -7,7 +7,7 @@ functions = HelperFunctions.new
 # A noobie way of overriding not_found block for 404
 error 404 do
     content_type :json
-    { :error => 404, :message => 'Not Found' }.to_json
+    { :error => 404, :message => @message }.to_json
 end
 
 # Get the current status of the tile
@@ -16,6 +16,7 @@ get '/tiles/:id.json' do
     if data = settings.history[params[:id]]
     	data.split[1]
     else
+    	@message = "Host " + params[:id] + "does not exist"
     	404
     end	
 end  
@@ -53,8 +54,9 @@ end
 get '/dashboards/:dashboardName' do
     dashboard = params[:dashboardName]    
     if functions.dashboardExists(dashboard, settings.root)
-    	{ :dashboard => dashboard, :message => 'Dashboard exists' }.to_json
+    	{ :dashboard => dashboard, :message => 'Dashboard ' +dashboard+  ' exists' }.to_json
     else
+    	@message = "Dashboard " + dashboard + " does not exist"
 	404
     end
 end
@@ -67,10 +69,11 @@ put '/dashboards/' do
     to = body['to']
     
     if functions.checkAuthToken(body, settings.auth_token)
-    	if functions.dashboardExists(body['from'], settings.root)
+    	if functions.dashboardExists(from, settings.root)
       	    File.rename(settings.root+'/dashboards/'+from+'.erb', settings.root+'/dashboards/'+to+'.erb')
             { :dashboard => :message => 'Dashboard Renamed' }.to_json
       	else
+      	    @message = "Dashboard " + from + " does not exist"
       	    404
       	end
     else 
@@ -89,8 +92,9 @@ delete '/dashboards/' do
         if dashboard != settings.default_dashboard
             if functions.dashboardExists(dashboard, settings.root)
                 File.delete(settings.root+'/dashboards/'+dashboard+'.erb')
-                { :dashboard => dashboard, :message => 'Dashboard deleted' }.to_json
+                { :dashboard => dashboard, :message => 'Dashboard ' +dashboard+ ' deleted' }.to_json
             else
+            	@message = "Dashboard " + dashboard + " does not exist"
 		404
             end
         else
@@ -109,8 +113,9 @@ get '/tiles/:id' do
     content_type :json
     hostName = params[:id]
     if settings.history[hostName]
-        { :tile => hostName, :message => 'The tile has a job script' }.to_json
+        { :tile => hostName, :message => 'Host' +hostName+ ' has a job script' }.to_json
     else
+    	@message = "Host " + hostName + " does not have a job script"
 	404
     end
 end
@@ -124,10 +129,11 @@ get '/tiles/:dashboard/:hosts'  do
         if output.empty?
             { :dashboard => dashboard, :tiles => hosts, :message => 'Tiles exists on the dashboard' }.to_json
         else
-	    status 400
-            { :dashboard => dashboard, :tiles => output.join(','), :message => 'Tiles are not on the dashboard' }.to_json
+            @message = "Tiles " +output.join(',')+ "does not exist on the dashboard " +dashboard
+	    404
         end
     else
+    	@message = "Dashboard " + dashboard + " does not exist"
 	404
     end
 end
@@ -149,12 +155,12 @@ put '/tiles/' do
                     File.write(settings.root+"/dashboards/"+dashboard+".erb",File.open(settings.root+"/dashboards/"+dashboard+".erb",&:read).gsub(from,to))
                     { :dashboard => dashboard, :tile => to, :message => 'Tile Renamed' }.to_json
                 else
-		    status 400
-                    { :dashboard => dashboard, :tile => from, :message => 'Tile not on the dashboard. Make sure you have given the correct tilename' }.to_json
+                    @message = "Tile " + from + " does not exist on the dashboard " + dashboard + ". Make sure you have given the correct tile name"
+		    404
                 end
             else
-		status  400
-                { :dashboard => dashboard, :message => 'Dashboard does not exist' }.to_json
+            	@message = "Dashboard " + dashboard + " does not exist"
+		404
             end
         else
 	    status 403
