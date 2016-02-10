@@ -15,6 +15,8 @@ get '/tiles/:id.json' do
     content_type :json
     if data = settings.history[params[:id]]
     	data.split[1]
+    else
+    	404
     end	
 end  
 
