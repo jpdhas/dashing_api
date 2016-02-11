@@ -61,6 +61,10 @@ curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "YOUR_AUTH_TOKEN
 
 Create a dashboard
 ```sh
-curl -i -H 'Accept: application/json' -d '{"auth_token": "YOUR_AUTH_TOKEN", "dashboard": , "tiles": {"hosts": [" "," "], "titles": [" ", " "], "widgets": [" ", " "], "urls": [" ", " "]}}' http://<hostname>/dashboards/
+curl -i -H 'Accept: application/json' -X POST -d '{"auth_token": "YOUR_AUTH_TOKEN", "dashboard": , "tiles": {"hosts": [" "," "], "titles": [" ", " "], "widgets": [" ", " "], "urls": [" ", " "]}}' http://<hostname>/dashboards/
 ```
 
+Delete a tile/ tiles on a dashboard:
+```sh
+curl -i -H 'Accept: application/json' -X DELETE -d '{"auth_token": "YOUR_AUTH_TOKEN", "tiles": [" ", " "]}' http://<hostname>/tiles/
+```
