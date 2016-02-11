@@ -202,28 +202,34 @@ post '/dashboards/' do
 end
 
 
-    # Delete a tile
-  delete '/widgets/' do
+# Delete a tile
+delete '/tiles/' do
     request.body.rewind
     body = JSON.parse(request.body.read)
     dashboard = body["dashboard"]
-    hosts = body["hosts"]
+    tiles = body["tiles"]
 
     if functions.checkAuthToken(body, settings.auth_token)
-       if dashboard != "blue"
-          if functions.dashboardExists(dashboard)
-             if output.empty?
-                functions.deleteTile(dashboard, hosts)
-             else
-                "Hosts "+output.join(',')+" are not on the dashboard"
-             end
-          else
-             "Dashboard "+dashboard+" does not exist!"
-          end
-       else
-          "Cant modify the Ops dashboard"
-       end
+        if dashboard != settings.default_dashboard
+            if functions.dashboardExists(dashboard, settings.root)
+                output = functions.tileExists(dashboard, tiles, settings.root)
+                if output.empty?
+                    functions.deleteTile(dashboard, tiles, settings.root)
+                    { :message => 'Tiles '+tiles.join(',')+ ' removed from the dashboard ' +dashboard  }.to_json
+                else
+                    @message = "Hosts "+output.join(',')+" are not on the dashboard " + dashboard
+                    404
+                end
+            else
+                @message = "Dashboard "+dashboard+" does not exist!"
+                404
+            end
+        else
+            @message = "Cant modify the default dashboard"
+            403
+        end
     else
-       "Invalid API Key!"
+        @message = "Invalid API Key!"
+        403
     end
-  end
+end
