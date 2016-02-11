@@ -1,7 +1,9 @@
 require 'erb'
 require 'socket'
+require 'nokogiri'
+require 'open-uri'
   
-def getTemplate()
+def newDashboard()
    %{
     	<script type='text/javascript'>
       	$(function myFunction() {
@@ -25,13 +27,34 @@ def getTemplate()
    }
 end
 
+def dashboardTemplate()
+   %{
+        <script type='text/javascript'>
+        $(function myFunction() {
+                $('li').live('click', function(e) {
+                var widget = $(this).find('widget');
+            var url = widget.data('url');
+            window.open(url, '_blank', "width=900, height=900, scrollvars=yes, toolbar=yes, resizable=yes");
+                });
+        });
+        </script>
+        <div class="gridster">
+                <ul>
+                <% for i in 0..body.length-1%>
+                        <%= body[i] %>
+                <% end %>
+                </ul>
+        </div>
+   }
+end
 
 class HelperFunctions
 
     include ERB::Util
 
     def initialize
-    	@template = getTemplate
+    	@newDashboard = newDashboard
+    	@dashboardTemplate = dashboardTemplate
     end
 
     # Check if the auth_token is a valid 
@@ -73,14 +96,14 @@ class HelperFunctions
     	end
     end
 
-    def render(body)
-        ERB.new(@template).result(binding)
+    def render(body, template)
+        ERB.new(template).result(binding)
     end
 
-    def save(file, body)
+    def save(file, body, template)
     	File.new(file, "w")
      	File.open(file, "w+") do |f|
-            f.write(render(body))
+            f.write(render(body, template))
      	end
     end
 
@@ -96,19 +119,35 @@ class HelperFunctions
      	end
     end
      	
-    def createDashboard(body, dashboardName, directory)
-        dashboard = directory+'/dashboards/'+dashboardName+'.erb'
+    def createDashboard(body, dashboard, directory)
+        dashboard = directory+'/dashboards/'+dashboard+'.erb'
         if checkArray(body) 
-    	    save(dashboard, body)
+    	    save(dashboard, body, @newDashboard)
     	    return true
     	else
     	    return false
     	end
     end
   
-     def deleteTile(dashboard, hosts)
-     	return hosts
-     end
+    def deleteTile(dashboard, hosts, directory)
+        liElements = Array.new
+        finalElement = Array.new
+        dashboard = directory+'/dashboards/'+dashboard+'.erb'
+
+        doc = Nokogiri::HTML(open(dashboard))
+        liElements = doc.search('div > ul > li')
+
+        liElements.each do |item|
+            element = item.to_s
+            if hosts.any? { |w| element[w] }
+                next
+            else
+                finalElement.push(element)
+            end
+        end
+        save(dashboard, finalElement, @dashboardTemplate)
+    end
+
 
   	# Get the hostname
     def getHost()
