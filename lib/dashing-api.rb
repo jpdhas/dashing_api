@@ -189,7 +189,7 @@ post '/dashboards/' do
                 dashboardLink = "http://"+functions.getHost()+"/"+dashboard
                 { :message => 'Dashboard Created', :dashboardLink => dashboardLink }.to_json
             else
-            	{ :message => 'Make sure' }.to_json
+            	{ :message => 'Error while creating the dashboard. Try again!' }.to_json
             end
         else
 	    status 400
