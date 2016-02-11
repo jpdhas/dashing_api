@@ -10,6 +10,11 @@ error 404 do
     { :error => 404, :message => @message }.to_json
 end
 
+error 403 do
+    content_type :json
+    { :error => 403, :message => @message }.to_json
+end
+
 # Get the current status of the tile
 get '/tiles/:id.json' do
     content_type :json
@@ -76,9 +81,9 @@ put '/dashboards/' do
       	    @message = "Dashboard " + from + " does not exist"
       	    404
       	end
-    else 
-	status 401
-      	{ :message => 'Invalid API Key' }.to_json
+    else
+    	@message = "Invalid API Key!"
+    	403
     end
 end
 
@@ -98,12 +103,12 @@ delete '/dashboards/' do
 		404
             end
         else
-	    status 401
-            { :dashboard => dashboard, :message => 'Cannot delete the main dashboard' }.to_json
+            @message = "Cannot delete the default dashboard"
+	    403
         end
     else
-	status 401
-        { :message => 'Invalid API Key' }.to_json
+    	@message = "Invalid API Key"
+	403
     end
 end
 
@@ -163,12 +168,12 @@ put '/tiles/' do
 		404
             end
         else
-	    status 403
-            { :dashboard => dashboard, :message => 'Cannot modify the main dashboard' }.to_json
+            @message = "Cannot modify the default dashboard"
+	    403
         end
     else
-        status 403
-        { :message => 'Invalid API Key'}.to_json
+    	@message = "Invalid API Key!"
+        403
     end
 end
 
@@ -191,8 +196,8 @@ post '/dashboards/' do
             { :dashboard => dashboard, :message => 'Dashboard already exists' }.to_json
         end
     else
-	status 403
-        { :message => 'Invalid API Key' }.to_json
+    	@message = "Invalid API Key!"
+	403
     end
 end
 
