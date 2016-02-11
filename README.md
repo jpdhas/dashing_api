@@ -66,5 +66,5 @@ curl -i -H 'Accept: application/json' -X POST -d '{"auth_token": "YOUR_AUTH_TOKE
 
 Delete a tile/ tiles on a dashboard:
 ```sh
-curl -i -H 'Accept: application/json' -X DELETE -d '{"auth_token": "YOUR_AUTH_TOKEN", "tiles": [" ", " "]}' http://<hostname>/tiles/
+curl -i -H 'Accept: application/json' -X DELETE -d '{"auth_token": "YOUR_AUTH_TOKEN", "dashboard": "", "tiles": [" ", " "]}' http://<hostname>/tiles/
 ```
