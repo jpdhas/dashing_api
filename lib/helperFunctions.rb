@@ -3,7 +3,7 @@ require 'socket'
 require 'nokogiri'
 require 'open-uri'
   
-def newDashboard()
+def newDashboardTemplate()
    %{
     	<script type='text/javascript'>
       	$(function myFunction() {
@@ -27,7 +27,7 @@ def newDashboard()
    }
 end
 
-def dashboardTemplate()
+def addDeleteTileTemplate()
    %{
         <script type='text/javascript'>
         $(function myFunction() {
@@ -53,8 +53,8 @@ class HelperFunctions
     include ERB::Util
 
     def initialize
-    	@newDashboard = newDashboard
-    	@dashboardTemplate = dashboardTemplate
+    	@newDashboardTemplate = newDashboardTemplate
+    	@addDeleteTileTemplate = addDeleteTileTemplate
     end
 
     # Check if the auth_token is a valid 
@@ -122,7 +122,7 @@ class HelperFunctions
     def createDashboard(body, dashboard, directory)
         dashboard = directory+'/dashboards/'+dashboard+'.erb'
         if checkArray(body) 
-    	    save(dashboard, body, @newDashboard)
+    	    save(dashboard, body, @newDashboardTemplate)
     	    return true
     	else
     	    return false
@@ -145,11 +145,34 @@ class HelperFunctions
                 finalElement.push(element)
             end
         end
-        save(dashboard, finalElement, @dashboardTemplate)
+        save(dashboard, finalElement, @addDeleteTileTemplate)
+    end
+    
+    def addTile(dashboard, body, directory)
+        dashboard = directory+'/dashboards/'+dashboard+'.erb'
+        finalElement = Array.new
+        if checkArray(body)
+            finalElement = getHtmlElements(dashboard, body['tiles']['hosts'])
+
+            for i in 0..body["tiles"]["hosts"].length-1
+                host = body["tiles"]["hosts"][i]
+                widget = body["tiles"]["widgets"][i]
+                title = body["tiles"]["titles"][i]
+                url = body["tiles"]["urls"][i]
+
+                tileElement = ["<li data-row=\"1\"  data-col=\"1\" data-sizex=\"2\" data-sizey=\"2\" onClick=\"myFunction()\">
+                                <div data-id=\"", host,"\" data-view=\"", widget,"\" data-unordered=\"true\" data-title=\"", title,"\" data-url=\"", url, "\" data-bind-style=\"status\" style=\"style\"></div>
+                               </li>"  ].join
+                finalElement.push(tileElement)
+            end
+            save(dashboard, finalElement, @addDeleteTileTemplate)
+            return true
+        else
+            return false
+        end
     end
 
-
-  	# Get the hostname
+    # Get the hostname
     def getHost()
         return Socket.gethostname
     end
