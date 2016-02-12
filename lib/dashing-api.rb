@@ -233,3 +233,38 @@ delete '/tiles/' do
         403
     end
 end
+
+#Add tile to dashboard
+put '/tiles/:dashboard' do
+    request.body.rewind
+    body = JSON.parse(request.body.read)
+    dashboard = params[:dashboard]
+    tiles = body["tiles"]["hosts"]
+
+    if functions.checkAuthToken(body, settings.auth_token)
+        if dashboard != settings.default_dashboard
+            if functions.dashboardExists(dashboard, settings.root)
+                output = functions.tileExists(dashboard, tiles, settings.root)
+                if output.empty?
+                    { :message => 'Tiles '+tiles.join(',')+ ' already on the dashboard ' +dashboard }.to_json
+                else
+                    if functions.addTile(dashboard, body, settings.root)
+                        { :message => 'Tiles '+tiles.join(',')+ ' added to the dashboard '+ dashboard  }.to_json
+                    else
+                        @message = "Please provide all details for the tiles"
+                        404
+                    end
+                end
+            else
+                @message = "Dashboard "+dashboard+" does not exist!"
+                404
+            end
+        else
+            @message = "Cant modify the default dashboard"
+            403
+        end
+    else
+        @message = "Invalid API Key!"
+        403
+    end
+end
