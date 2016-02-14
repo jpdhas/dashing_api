@@ -268,3 +268,33 @@ put '/tiles/:dashboard' do
         403
     end
 end
+
+
+#Ping and add/ remove tile
+
+put '/ping/:dashboard' do
+    request.body.rewind
+    body = JSON.parse(request.body.read)
+    dashboard = params[:dashboard]
+
+    if functions.checkAuthToken(body, settings.auth_token)
+        if dashboard != settings.default_dashboard
+            if functions.dashboardExists(dashboard, settings.root)
+                if functions.pingHosts(dashboard, body, settings.root)
+                    { :message => "Tiles added/ removed successfully" }.to_json
+                else
+                    { :message => "Body contains duplicate values" }.to_json
+                end
+            else
+                @message = "Dashboard "+dashboard+" does not exist!"
+                404
+            end
+        else
+            @message = "Cant modify the default dashboard"
+            403
+        end
+    else
+        @message = "Invalid API Key!"
+       403
+   end
+end
