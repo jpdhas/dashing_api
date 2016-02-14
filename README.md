@@ -73,3 +73,8 @@ Add a tile/tiles to a dashboard
 ```sh
 curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "YOUR_AUTH_TOKEN", "dashboard": , "tiles": {"hosts": [" "," "], "titles": [" ", " "], "widgets": [" ", " "], "urls": [" ", " "]}}' http://<hostname>/tiles/:dashboard
 ```
+
+Ping hosts and add to/ remove from a dashboard
+```sh
+curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "YOUR_AUTH_TOKEN", "dashboard": , "tiles": {"hosts": [" "," "], "titles": [" ", " "], "widgets": [" ", " "], "urls": [" ", " "]}}' http://<hostname>/ping/:dashboard
+```
