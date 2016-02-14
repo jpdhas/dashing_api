@@ -172,6 +172,74 @@ class HelperFunctions
         end
     end
 
+    def uniq?(array)
+        if array.length == array.uniq.length
+            return true
+        else
+            return false
+        end
+    end
+
+    def pingHosts(dashboard, body, directory)
+        notFound = Array.new
+
+        upArr = Array.new
+        downArr = Array.new
+
+        if uniq?(body["tiles"]["hosts"])
+            body["tiles"]["hosts"].each do |host|
+                if up?(host)
+                    upArr.push(host)
+                else
+                    downArr.push(host)
+                end
+            end
+
+            upOutput = tileExists(dashboard, upArr, directory)
+
+            if !upOutput.empty?
+                hosts = Array.new
+                titles = Array.new
+                widgets = Array.new
+                urls = Array.new
+
+                for i in 0..upOutput.length-1
+                    host = upOutput[i]
+                    for j in 0..body["tiles"]["hosts"].length-1
+                            checkhost = body["tiles"]["hosts"][j]
+                            if checkhost == host
+                                hosts.push(host)
+                                widgets.push(body["tiles"]["widgets"][j])
+                                titles.push(body["tiles"]["titles"][j])
+                                urls.push(body["tiles"]["urls"][j])
+                            else
+                                next
+                            end
+                    end
+                end
+
+                jsonArray = { :tiles => { :hosts => hosts, :widgets => widgets, :titles => titles, :urls => urls} }.to_json
+                objArray = JSON.parse(jsonArray)
+
+                addTile(dashboard, objArray, directory)
+            end
+
+            downOutput = tileExists(dashboard, downArr, directory)
+
+            if !downOutput.empty?
+                tileToRemove = downArr - downOutput
+            else
+                tileToRemove = downArr
+            end
+
+            deleteTile(dashboard, tileToRemove, directory)
+            return true
+        else
+            return false
+        end
+    end
+
+
     # Get the hostname
     def getHost()
         return Socket.gethostname
