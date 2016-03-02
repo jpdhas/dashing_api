@@ -129,6 +129,23 @@ class HelperFunctions
     	end
     end
   
+    def getHtmlElements(dashboard, hosts)
+        liElements = Array.new
+        finalElement = Array.new
+        doc = Nokogiri::HTML(open(dashboard))
+        liElements = doc.search('div > ul > li')
+
+        liElements.each do |item|
+            element = item.to_s
+            if hosts.any? { |w| element[w] }
+                next
+            else
+                finalElement.push(element)
+            end
+        end
+        return finalElement
+    end
+  
     def deleteTile(dashboard, hosts, directory)
         liElements = Array.new
         finalElement = Array.new
