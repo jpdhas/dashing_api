@@ -76,7 +76,7 @@ put '/dashboards/' do
     if functions.checkAuthToken(body, settings.auth_token)
     	if functions.dashboardExists(from, settings.root)
       	    File.rename(settings.root+'/dashboards/'+from+'.erb', settings.root+'/dashboards/'+to+'.erb')
-            { :dashboard => :message => 'Dashboard Renamed' }.to_json
+            { :message => 'Dashboard Renamed from ' + from +' to ' + to }.to_json
       	else
       	    @message = "Dashboard " + from + " does not exist"
       	    404
