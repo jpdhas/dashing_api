@@ -154,7 +154,7 @@ put '/tiles/' do
   
     if functions.checkAuthToken(body, settings.auth_token)
         if dashboard != settings.default_dashboard
-            if functions.dashboardExists(dashboard)
+            if functions.dashboardExists(dashboard, settings.root)
                 output = functions.tileExists(dashboard,from, settings.root)
                 if output.empty?
                     File.write(settings.root+"/dashboards/"+dashboard+".erb",File.open(settings.root+"/dashboards/"+dashboard+".erb",&:read).gsub(from,to))
