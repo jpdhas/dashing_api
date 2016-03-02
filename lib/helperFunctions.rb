@@ -2,6 +2,7 @@ require 'erb'
 require 'socket'
 require 'nokogiri'
 require 'open-uri'
+require 'net/ping'
   
 def newDashboardTemplate()
    %{
@@ -188,6 +189,12 @@ class HelperFunctions
             return false
         end
     end
+
+    def up?(host)
+        check = Net::Ping::External.new(host)
+        return check.ping?
+    end
+
 
     def uniq?(array)
         if array.length == array.uniq.length
