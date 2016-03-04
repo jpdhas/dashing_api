@@ -114,7 +114,7 @@ end
 
   
 # Check if a job script is working
-get '/tiles/:id' do
+get '/jobs/:id' do
     content_type :json
     hostName = params[:id]
     if settings.history[hostName]
