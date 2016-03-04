@@ -56,8 +56,8 @@ get '/dashboards/' do
 end
 
 # Check is a dashboard exists
-get '/dashboards/:dashboardName' do
-    dashboard = params[:dashboardName]    
+get '/dashboards/:dashboard' do
+    dashboard = params[:dashboard]    
     if functions.dashboardExists(dashboard, settings.root)
     	{ :dashboard => dashboard, :message => 'Dashboard ' +dashboard+  ' exists' }.to_json
     else
@@ -67,11 +67,11 @@ get '/dashboards/:dashboardName' do
 end
 
 # Rename a dashboard
-put '/dashboards/' do
+put '/dashboards/:from/:to' do
     request.body.rewind
     body = JSON.parse(request.body.read)
-    from = body['from']
-    to = body['to']
+    from = params[:from]
+    to = params[:to]
     
     if functions.checkAuthToken(body, settings.auth_token)
     	if functions.dashboardExists(from, settings.root)
@@ -88,10 +88,10 @@ put '/dashboards/' do
 end
 
 # Delete a dashboard
-delete '/dashboards/' do
+delete '/dashboards/:dashboard' do
     request.body.rewind
     body = JSON.parse(request.body.read)
-    dashboard = body["dashboard"]
+    dashboard = params[:dashboard]
    
     if functions.checkAuthToken(body, settings.auth_token)
         if dashboard != settings.default_dashboard
@@ -178,10 +178,10 @@ put '/tiles/' do
 end
 
 # Create a new dashboard
-post '/dashboards/' do
+post '/dashboards/:dashboard' do
     request.body.rewind
     body = JSON.parse(request.body.read)
-    dashboard = body["dashboard"]
+    dashboard = params[:dashboard]
 
     if functions.checkAuthToken(body, settings.auth_token)
         if !functions.dashboardExists(dashboard, settings.root)
@@ -203,10 +203,10 @@ end
 
 
 # Delete a tile
-delete '/tiles/' do
+delete '/tiles/:dashboard' do
     request.body.rewind
     body = JSON.parse(request.body.read)
-    dashboard = body["dashboard"]
+    dashboard = params[:dashboard]
     tiles = body["tiles"]
 
     if functions.checkAuthToken(body, settings.auth_token)

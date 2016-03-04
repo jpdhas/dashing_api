@@ -46,12 +46,12 @@ curl -i http://$DASHING_HOST/tiles/:dashboard/:hosts
 
 Delete a dashboard:
 ```sh
-curl -X DELETE -H "Content-type: application/json" -d '{"auth_token": "$DASHING_AUTH_TOKEN", "dashboard": ""}' http://$DASHING_HOST/dashboards/
+curl -X DELETE -H "Content-type: application/json" -d '{"auth_token": "$DASHING_AUTH_TOKEN"}' http://$DASHING_HOST/dashboards/:dashboard
 ```
 
 Rename a dashboard:
 ```sh
-curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_TOKEN", "from": "", "to": ""}' http://$DASHING_HOST/dashboards/
+curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_TOKEN"}' http://$DASHING_HOST/dashboards/:from/:to
 ```
 
 Replace a nagios host on a dashboard:
@@ -61,22 +61,22 @@ curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_T
 
 Create a dashboard
 ```sh
-curl -i -H 'Accept: application/json' -X POST -d '{"auth_token": "$DASHING_AUTH_TOKEN", "dashboard": "", "tiles": {"hosts": [" "," "], "titles": [" ", " "], "widgets": [" ", " "], "urls": [" ", " "]}}' http://$DASHING_HOST/dashboards/
+curl -i -H 'Accept: application/json' -X POST -d '{"auth_token": "$DASHING_AUTH_TOKEN", "tiles": {"hosts": [" "," "], "titles": [" ", " "], "widgets": [" ", " "], "urls": [" ", " "]}}' http://$DASHING_HOST/dashboards/:dashboard
 ```
 
 Delete a tile/ tiles from a dashboard:
 ```sh
-curl -i -H 'Accept: application/json' -X DELETE -d '{"auth_token": "$DASHING_AUTH_TOKEN", "dashboard": "", "tiles": [" ", " "]}' http://$DASHING_HOST/tiles/
+curl -i -H 'Accept: application/json' -X DELETE -d '{"auth_token": "$DASHING_AUTH_TOKEN", "tiles": [" ", " "]}' http://$DASHING_HOST/tiles/:dashboard
 ```
 
 Add a tile/tiles to a dashboard
 ```sh
-curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_TOKEN", "dashboard": "", "tiles": {"hosts": [" "," "], "titles": [" ", " "], "widgets": [" ", " "], "urls": [" ", " "]}}' http://$DASHING_HOST/tiles/:dashboard
+curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_TOKEN", "tiles": {"hosts": [" "," "], "titles": [" ", " "], "widgets": [" ", " "], "urls": [" ", " "]}}' http://$DASHING_HOST/tiles/:dashboard
 ```
 
 Ping hosts and add to/ remove from a dashboard
 ```sh
-curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_TOKEN", "dashboard": "", "tiles": {"hosts": [" "," "], "titles": [" ", " "], "widgets": [" ", " "], "urls": [" ", " "]}}' http://$DASHING_HOST/ping/:dashboard
+curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_TOKEN", "tiles": {"hosts": [" "," "], "titles": [" ", " "], "widgets": [" ", " "], "urls": [" ", " "]}}' http://$DASHING_HOST/ping/:dashboard
 ```
 
 ## Use the gem with dashing
