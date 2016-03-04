@@ -51,7 +51,7 @@ curl -X DELETE -H "Content-type: application/json" -d '{"auth_token": "$DASHING_
 
 Rename a dashboard:
 ```sh
-curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_TOKEN"}' http://$DASHING_HOST/dashboards/:from/:to
+curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_TOKEN", "from": "", "to": ""}' http://$DASHING_HOST/dashboards/
 ```
 
 Replace a nagios host on a dashboard:

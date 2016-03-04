@@ -67,11 +67,11 @@ get '/dashboards/:dashboard' do
 end
 
 # Rename a dashboard
-put '/dashboards/:from/:to' do
+put '/dashboards/' do
     request.body.rewind
     body = JSON.parse(request.body.read)
-    from = params[:from]
-    to = params[:to]
+    from = body["from"]
+    to = body["to"]
     
     if functions.checkAuthToken(body, settings.auth_token)
     	if functions.dashboardExists(from, settings.root)
