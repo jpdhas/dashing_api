@@ -98,6 +98,7 @@ delete '/dashboards/:dashboard' do
             if functions.dashboardExists(dashboard, settings.root)
                 File.delete(settings.root+'/dashboards/'+dashboard+'.erb')
                 { :dashboard => dashboard, :message => 'Dashboard ' +dashboard+ ' deleted' }.to_json
+		status 202
             else
             	@message = "Dashboard " + dashboard + " does not exist"
 		404
@@ -216,6 +217,7 @@ delete '/tiles/:dashboard' do
                 if output.empty?
                     functions.deleteTile(dashboard, tiles, settings.root)
                     { :message => 'Tiles '+tiles.join(',')+ ' removed from the dashboard ' +dashboard  }.to_json
+		    status 202
                 else
                     @message = "Hosts "+output.join(',')+" are not on the dashboard " + dashboard
                     404
