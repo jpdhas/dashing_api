@@ -49,7 +49,9 @@ get '/dashboards/' do
     Dir.entries(settings.root+'/dashboards/').each do |dashboard|
     	dashArray = dashboard.split("/")
 	dashboard = dashArray[dashArray.length-1]
-	dashboards.push dashboard
+	if dashboard.include? ".erb"
+            dashboards.push dashboard
+	end
     end
 
     { :dashboards => dashboards }.to_json
