@@ -10,4 +10,6 @@ Gem::Specification.new do |s|
   s.homepage    =
     'http://rubygems.org/gems/dashing-api'
   s.license       = 'MIT'
+
+  s.add_dependency('net-ping', '~> 1.7.0')
 end
