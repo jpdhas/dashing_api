@@ -79,7 +79,7 @@ class HelperFunctions
 	doNotExist = Array.new
     	for hosts in arrHosts
     	    host = "data-id=\""+hosts+"\""
-       	    if File.foreach(directory+'/dashboards/'+dashboardName+'.erb').any?{ |l| l[host]  }
+       	    if File.foreach(directory+'/dashboards/'+dashboard+'.erb').any?{ |l| l[host]  }
                 next
        	    else 
           	doNotExist.push(hosts)
