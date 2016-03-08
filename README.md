@@ -81,7 +81,7 @@ curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_T
 
 ## Use the gem with dashing
 
-* Add `'gem dashing-api'` and `'gem net-ping'` to the `Gemfile`
+* Add `'gem dashing-api'` to the `Gemfile`
 * Require the gem in `config.ru` by adding `require 'dashing-api'`
 * Run `bundle` from the project's directory
 * Restart dashing
