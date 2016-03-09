@@ -4,12 +4,12 @@
 
 Build a gem:
 ```sh
-gem build dashing-api.gemspec
+rake build
 ```
 
 Install:
 ```sh
-gem install dashing-api-$VERSION.gem
+rake install
 ```
 
 ## API endpoints

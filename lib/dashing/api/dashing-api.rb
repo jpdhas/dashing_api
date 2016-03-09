@@ -1,6 +1,6 @@
 require 'json'
 require 'sinatra'
-require 'helperFunctions.rb'
+require 'dashing/api/helperFunctions'
 
 functions = HelperFunctions.new
 
