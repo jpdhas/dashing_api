@@ -83,5 +83,5 @@ curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_T
 
 * Add `'gem dashing-api'` to the `Gemfile`
 * Require the gem in `config.ru` by adding `require 'dashing-api'`
-* Run `bundle` from the project's directory
+* Run `bundle install` from the project's directory
 * Restart dashing
