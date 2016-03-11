@@ -106,3 +106,7 @@ curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_T
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## License
+
+[MIT License](https://github.com/Financial-Times/dashing_api/blob/master/LICENSE.txt)
