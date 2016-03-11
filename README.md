@@ -1,6 +1,6 @@
-#Dashing API
+# Dashing API
 
-## Building
+## Test it locally
 
 Build a gem:
 ```sh
@@ -11,6 +11,26 @@ Install:
 ```sh
 rake install
 ```
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+  ```sh
+  gem 'dashing_api'
+  ```
+
+And then execute:
+
+  ```sh
+  bundle
+  ```
+
+Or install it yourself as:
+
+  ```sh
+  gem install dashing_api
+  ```
 
 ## API endpoints
 
@@ -79,9 +99,10 @@ Ping hosts and add to/ remove tiles from a dashboard
 curl -i -H 'Accept: application/json' -X PUT -d '{"auth_token": "$DASHING_AUTH_TOKEN", "tiles": {"hosts": [" "," "], "titles": [" ", " "], "widgets": [" ", " "], "urls": [" ", " "]}}' http://$DASHING_HOST/ping/:dashboard
 ```
 
-## Use the gem with dashing
+## Contributing
 
-* Add `'gem dashing-api'` to the `Gemfile`
-* Require the gem in `config.ru` by adding `require 'dashing-api'`
-* Run `bundle install` from the project's directory
-* Restart dashing
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
