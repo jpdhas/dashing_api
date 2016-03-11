@@ -77,8 +77,12 @@ put '/dashboards/' do
     
     if functions.checkAuthToken(body, settings.auth_token)
     	if functions.dashboardExists(from, settings.root)
-      	    File.rename(settings.root+'/dashboards/'+from+'.erb', settings.root+'/dashboards/'+to+'.erb')
-            { :message => 'Dashboard Renamed from ' + from +' to ' + to }.to_json
+    		if from != settings.default_dashboard
+      	            File.rename(settings.root+'/dashboards/'+from+'.erb', settings.root+'/dashboards/'+to+'.erb')
+                    { :message => 'Dashboard Renamed from ' + from +' to ' + to }.to_json
+                else
+                    { :message => 'Cannot rename the default dashboard ' + from }.to_json
+                end
       	else
       	    @message = "Dashboard " + from + " does not exist"
       	    404
@@ -96,17 +100,17 @@ delete '/dashboards/:dashboard' do
     dashboard = params[:dashboard]
    
     if functions.checkAuthToken(body, settings.auth_token)
-        if dashboard != settings.default_dashboard
-            if functions.dashboardExists(dashboard, settings.root)
+        if functions.dashboardExists(dashboard, settings.root)
+            if dashboard != settings.default_dashboard
                 File.delete(settings.root+'/dashboards/'+dashboard+'.erb')
                 { :dashboard => dashboard, :message => 'Dashboard ' +dashboard+ ' deleted' }.to_json
 		status 202
             else
-            	@message = "Dashboard " + dashboard + " does not exist"
+            	@message = "Cannot delete the default dashboard"
 		404
             end
         else
-            @message = "Cannot delete the default dashboard"
+            @message = "Dashboard " + dashboard + " does not exist"
 	    403
         end
     else
