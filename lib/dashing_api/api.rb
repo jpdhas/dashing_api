@@ -50,7 +50,7 @@ get '/dashboards/' do
     	dashArray = dashboard.split("/")
 	dashboard = dashArray[dashArray.length-1]
 	if dashboard.include? ".erb"
-            dashboards.push dashboard
+            dashboards.push dashboard.chomp(".erb")
 	end
     end
 
