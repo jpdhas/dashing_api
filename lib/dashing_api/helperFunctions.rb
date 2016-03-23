@@ -205,8 +205,6 @@ class HelperFunctions
     end
 
     def pingHosts(dashboard, body, directory)
-        notFound = Array.new
-
         upArr = Array.new
         downArr = Array.new
 
