@@ -1,5 +1,5 @@
-require 'minitest/autorun'
 require 'helper'
+require 'minitest/autorun'
 
 class AppTest < MiniTest::Unit::TestCase
   include DashingApi::TestHelper
