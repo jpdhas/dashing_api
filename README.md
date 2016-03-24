@@ -12,6 +12,11 @@ Install:
 rake install
 ```
 
+Run unit tests:
+```sh
+rake test
+```
+
 ## Installation
 
 Add this line to your application's Gemfile:
