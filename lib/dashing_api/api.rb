@@ -221,8 +221,7 @@ delete '/tiles/:dashboard' do
                 output = functions.tileExists(dashboard, tiles, settings.root)
                 if output.empty?
                     functions.deleteTile(dashboard, tiles, settings.root)
-                    body "foo"
-                    { :message => 'Tiles '+tiles.join(',')+ " removed from the dashboard #{dashboard}"  }.to_json
+                    body({ :message => 'Tiles '+tiles.join(',')+ " removed from the dashboard #{dashboard}"  }.to_json)
 		    status 202
                 else
                     @message = "Hosts "+output.join(',')+" are not on the dashboard " + dashboard

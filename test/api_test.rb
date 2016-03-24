@@ -143,4 +143,76 @@ class AppTest < MiniTest::Unit::TestCase
     end
   end
 
+  def test_add_tile_to_dashboard
+    with_fixture :three_dashboards do
+      payload = '{"auth_token": "scoobydoo", "tiles": {"hosts":["host3"],"widgets":["widget3"],"titles":["title3"],"urls":["url3"]}}'
+      put '/tiles/dashboard1', payload
+      assert_equal 200, last_response.status
+      assert_equal 'Tiles host3 added to the dashboard dashboard1', msg
+    end
+  end
+
+  def test_add_tile_to_default_dashboard
+    with_fixture :three_dashboards do
+      payload = '{"auth_token": "scoobydoo", "tiles": {"hosts":["host3"],"widgets":["widget3"],"titles":["title3"],"urls":["url3"]}}'
+      put '/tiles/default_dashboard', payload
+      assert_equal 403, last_response.status
+      assert_equal 'Cant modify the default dashboard', msg
+    end
+  end
+
+  def test_add_tile_to_nonexistent_dashboard
+    with_fixture :three_dashboards do
+      payload = '{"auth_token": "scoobydoo", "tiles": {"hosts":["host3"],"widgets":["widget3"],"titles":["title3"],"urls":["url3"]}}'
+      put '/tiles/nonexistent_dashboard', payload
+      assert_equal 404, last_response.status
+      assert_equal 'Dashboard nonexistent_dashboard does not exist!', msg
+    end
+  end
+
+  def test_add_tile_to_dashboard_with_bad_api_key
+    with_fixture :three_dashboards do
+      payload = '{"auth_token": "bad_api_key", "tiles": {"hosts":["host3"],"widgets":["widget3"],"titles":["title3"],"urls":["url3"]}}'
+      put '/tiles/dashboard1', payload
+      assert_equal 403, last_response.status
+      assert_equal 'Invalid API Key!', msg
+    end
+  end
+
+  def test_delete_tile_from_dashboard
+    with_fixture :three_dashboards do
+      payload = '{"auth_token": "scoobydoo", "tiles": ["tile1"]}'
+      delete '/tiles/dashboard1', payload
+      assert_equal 202, last_response.status
+      assert_equal 'Tiles tile1 removed from the dashboard dashboard1', msg
+    end
+  end
+
+  def test_delete_tile_from_default_dashboard
+    with_fixture :three_dashboards do
+      payload = '{"auth_token": "scoobydoo", "tiles": ["tile1"]}'
+      delete '/tiles/default_dashboard', payload
+      assert_equal 403, last_response.status
+      assert_equal 'Cant modify the default dashboard', msg
+    end
+  end
+
+  def test_delete_tile_from_nonexistent_dashboard
+    with_fixture :three_dashboards do
+      payload = '{"auth_token": "scoobydoo", "tiles": ["tile1"]}'
+      delete '/tiles/nonexistent_dashboard', payload
+      assert_equal 404, last_response.status
+      assert_equal 'Dashboard nonexistent_dashboard does not exist!', msg
+    end
+  end
+
+  def test_delete_tile_from_dashboard_with_bad_api_key
+    with_fixture :three_dashboards do
+      payload = '{"auth_token": "bad_api_key", "tiles": ["tile1"]}'
+      delete '/tiles/nonexistent_dashboard', payload
+      assert_equal 403, last_response.status
+      assert_equal 'Invalid API Key!', msg
+    end
+  end
+
 end
