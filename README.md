@@ -2,19 +2,22 @@
 
 ## Test it locally
 
+Install bundler if you don't already have it (`gem install bundler`), then run `bundle install` to pull
+in dependencies. Then you can:
+
 Build a gem:
 ```sh
-rake build
+bundle exec rake build
 ```
 
 Install:
 ```sh
-rake install
+bundle exec rake install
 ```
 
 Run unit tests:
 ```sh
-rake test
+bundle exec rake test
 ```
 
 ## Installation
