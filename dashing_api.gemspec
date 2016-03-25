@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
 
   # Dashing and the TCP Ping class requires this
-  spec.required_ruby_version = ">1.9.3"
+  spec.required_ruby_version = ">=1.9.3"
 
   spec.add_dependency "dashing", "~> 1.3.4"
   spec.add_dependency "net-ping", "~> 1.7"
