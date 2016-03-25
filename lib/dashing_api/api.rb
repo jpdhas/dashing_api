@@ -46,14 +46,13 @@ get '/dashboards/' do
     dashboards = Array.new()
 
     # Get the name of the dashboard only. Strip the path
-    Dir.entries(settings.root+'/dashboards/').each do |dashboard|
+    Dir.entries(settings.root+'/dashboards/').sort.each do |dashboard|
     	dashArray = dashboard.split("/")
-	dashboard = dashArray[dashArray.length-1]
-	if dashboard.include? ".erb"
-            dashboards.push dashboard.chomp(".erb")
-	end
+      dashboard = dashArray[dashArray.length-1]
+	    if dashboard.include? ".erb"
+        dashboards.push dashboard.chomp(".erb")
+	    end
     end
-
     { :dashboards => dashboards }.to_json
 end
 
@@ -61,7 +60,7 @@ end
 get '/dashboards/:dashboard' do
     dashboard = params[:dashboard]    
     if functions.dashboardExists(dashboard, settings.root)
-    	{ :dashboard => dashboard, :message => 'Dashboard ' +dashboard+  ' exists' }.to_json
+    	{ :dashboard => dashboard, :message => "Dashboard #{dashboard} exists" }.to_json
     else
     	@message = "Dashboard " + dashboard + " does not exist"
 	404
@@ -74,12 +73,12 @@ put '/dashboards/' do
     body = JSON.parse(request.body.read)
     from = body["from"]
     to = body["to"]
-    
+
     if functions.checkAuthToken(body, settings.auth_token)
     	if functions.dashboardExists(from, settings.root)
     		if from != settings.default_dashboard
       	            File.rename(settings.root+'/dashboards/'+from+'.erb', settings.root+'/dashboards/'+to+'.erb')
-                    { :message => 'Dashboard Renamed from ' + from +' to ' + to }.to_json
+                    { :message => "Dashboard Renamed from #{from} to #{to}" }.to_json
                 else
                     { :message => 'Cannot rename the default dashboard ' + from }.to_json
                 end
@@ -98,13 +97,13 @@ delete '/dashboards/:dashboard' do
     request.body.rewind
     body = JSON.parse(request.body.read)
     dashboard = params[:dashboard]
-   
+
     if functions.checkAuthToken(body, settings.auth_token)
         if functions.dashboardExists(dashboard, settings.root)
             if dashboard != settings.default_dashboard
                 File.delete(settings.root+'/dashboards/'+dashboard+'.erb')
-                { :dashboard => dashboard, :message => 'Dashboard ' +dashboard+ ' deleted' }.to_json
-		status 202
+                body({ :dashboard => dashboard, :message => "Dashboard #{dashboard} deleted" }.to_json)
+		            202
             else
             	@message = "Cannot delete the default dashboard"
 		404
@@ -125,7 +124,7 @@ get '/jobs/:id' do
     content_type :json
     hostName = params[:id]
     if settings.history[hostName]
-        { :tile => hostName, :message => 'Host' +hostName+ ' has a job script' }.to_json
+        { :tile => hostName, :message => 'Host' + hostName + ' has a job script' }.to_json
     else
     	@message = "Host " + hostName + " does not have a job script"
 	404
@@ -141,7 +140,7 @@ get '/tiles/:dashboard/:hosts'  do
         if output.empty?
             { :dashboard => dashboard, :tiles => hosts, :message => 'Tiles exists on the dashboard' }.to_json
         else
-            @message = "Tiles " +output.join(',')+ "does not exist on the dashboard " +dashboard
+            @message = "Tiles " + output.join(',') + " does not exist on the dashboard #{dashboard}"
 	    404
         end
     else
@@ -222,7 +221,7 @@ delete '/tiles/:dashboard' do
                 output = functions.tileExists(dashboard, tiles, settings.root)
                 if output.empty?
                     functions.deleteTile(dashboard, tiles, settings.root)
-                    { :message => 'Tiles '+tiles.join(',')+ ' removed from the dashboard ' +dashboard  }.to_json
+                    body({ :message => 'Tiles '+tiles.join(',')+ " removed from the dashboard #{dashboard}"  }.to_json)
 		    status 202
                 else
                     @message = "Hosts "+output.join(',')+" are not on the dashboard " + dashboard
@@ -254,7 +253,7 @@ put '/tiles/:dashboard' do
             if functions.dashboardExists(dashboard, settings.root)
                 output = functions.tileExists(dashboard, tiles, settings.root)
                 if output.empty?
-                    { :message => 'Tiles '+tiles.join(',')+ ' already on the dashboard ' +dashboard }.to_json
+                    { :message => 'Tiles '+tiles.join(',')+ " already on the dashboard #{dashboard}" }.to_json
                 else
                     if functions.addTile(dashboard, body, settings.root)
                         { :message => 'Tiles '+tiles.join(',')+ ' added to the dashboard '+ dashboard  }.to_json
@@ -304,5 +303,5 @@ put '/ping/:dashboard' do
     else
         @message = "Invalid API Key!"
        403
-   end
+    end
 end
