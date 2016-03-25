@@ -1,0 +1,3 @@
+machine:
+  ruby:
+    version: rbx-1.9.3
