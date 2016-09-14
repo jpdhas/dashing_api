@@ -19,7 +19,7 @@ end
 get '/tiles/:id.json' do
     content_type :json
     if data = settings.history[params[:id]]
-    	data.split[1]
+    	data.sub("data: ", "")
     else
     	@message = "Host " + params[:id] + "does not exist"
     	404
