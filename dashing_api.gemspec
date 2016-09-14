@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   # Dashing and the TCP Ping class requires this
   spec.required_ruby_version = ">=1.9.3"
 
-  spec.add_dependency "dashing", "~> 1.3.4"
+  spec.add_dependency "dashing", ">= 1.3.0"
   spec.add_dependency "net-ping", "~> 1.7"
   spec.add_dependency "nokogiri"
  
